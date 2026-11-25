@@ -327,6 +327,22 @@ def test_run_query_timeout(client: HoneycombClient) -> None:
     assert client.get_query_result.call_count == 2
 
 
+def test_run_query_accepts_result_completed_on_last_poll(client: HoneycombClient) -> None:
+    client.create_query = MagicMock(return_value={"success": True, "query_id": "q1"})
+    client.create_query_result = MagicMock(
+        return_value={"success": True, "result": {"id": "r1", "complete": False}}
+    )
+    client.get_query_result = MagicMock(
+        return_value={"success": True, "result": {"id": "r1", "complete": True, "data": {}}}
+    )
+
+    with patch("time.sleep"):
+        result = client.run_query({"calculations": []}, poll_attempts=1)
+
+    assert result["success"] is True
+    assert client.get_query_result.call_count == 1
+
+
 def test_run_query_create_result_failure(client: HoneycombClient) -> None:
     client.create_query = MagicMock(return_value={"success": True, "query_id": "q1"})
     client.create_query_result = MagicMock(
