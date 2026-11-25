@@ -266,11 +266,19 @@ def get_system_health(config: ClickHouseConfig) -> dict[str, Any]:
                 "  'Query', 'Merge', 'PartMutation', "
                 "  'ReplicatedFetch', 'ReplicatedSend', "
                 "  'TCPConnection', 'HTTPConnection', "
-                "  'ReadonlyReplica', 'MaxPartCountForPartition'"
+                "  'ReadonlyReplica'"
                 ")"
             )
             metrics = {}
             for row in metrics_result.named_results():
+                metrics[row["metric"]] = row["value"]
+
+            # MaxPartCountForPartition is an asynchronous metric; system.metrics never has it.
+            async_metrics_result = client.query(
+                "SELECT metric, value FROM system.asynchronous_metrics "
+                "WHERE metric = 'MaxPartCountForPartition'"
+            )
+            for row in async_metrics_result.named_results():
                 metrics[row["metric"]] = row["value"]
 
             # Get uptime and version
