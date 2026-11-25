@@ -50,7 +50,7 @@ def _emit_llm_config() -> None:
         "deepseek": "DEEPSEEK_REASONING_MODEL",
         "gemini": "GEMINI_REASONING_MODEL",
         "nvidia": "NVIDIA_REASONING_MODEL",
-        "bedrock": "BEDROCK_MODEL",
+        "bedrock": "BEDROCK_REASONING_MODEL",
         "minimax": "MINIMAX_REASONING_MODEL",
         "ollama": "OLLAMA_MODEL",
     }
