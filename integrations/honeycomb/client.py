@@ -223,7 +223,7 @@ class HoneycombClient:
             fetched_result = fetched.get("result", {})
             if isinstance(fetched_result, dict):
                 current_result = fetched_result
-        else:
+        if current_result.get("complete") is not True:
             return {
                 "success": False,
                 "error": "Honeycomb query result did not complete before the timeout.",
